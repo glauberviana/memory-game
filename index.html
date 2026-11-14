@@ -1,11 +1,40 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jogo da Memoria</title>
+    <title>Jogo da Memória</title>
+
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+    <h1>Jogo da Memória</h1>
+
+    <section class="placar">
+
+        <div>
+            <h2>Jogador 1</h2>
+            <p>Pontos: <span id="pontos1">0</span></p>
+        </div>
+
+        <div>
+            <h2>Jogador 2</h2>
+            <p>Pontos: <span id="pontos2">0</span></p>
+        </div>
+
+    </section>
+
+    <h3 id="vez-jogador">Vez do Jogador 1</h3>
+
+    <div id="tabuleiro" class="tabuleiro">
+       
+    </div>
+
+    <button id="reiniciar">Jogar novamente</button>
+
+    <script src="script.js"></script>
 
 </body>
 </html>

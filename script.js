@@ -14,7 +14,7 @@ let primeira = null;
 let bloqueado = false;
 let vez = 1;
 let pontos = [0, 0];
-let pares = 0;           
+let pares = 0;
 
 const tabuleiro = document.getElementById("tabuleiro");
 const vezJogador = document.getElementById("vez-jogador");

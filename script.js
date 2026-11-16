@@ -1,131 +1,105 @@
-
-const tabuleiro = document.getElementById("tabuleiro");
-
-const cartas = [
-    "🐶", "🐶",
-    "🐱", "🐱",
-    "🐸", "🐸",
-    "🦊", "🦊",
-    "🐼", "🐼",
-    "🐵", "🐵",
-    "🦁", "🦁",
-    "🐰", "🐰"
+const simbolos = [
+    "img/1.png",
+    "img/2.png",
+    "img/3.png",
+    "img/4.png",
+    "img/5.png",
+    "img/6.png",
+    "img/7.png",
+    "img/8.png"
 ];
 
-let primeiraCarta = null;
-let segundaCarta = null;
-let jogadorAtual = 1;
-let pontos1 = 0;
-let pontos2 = 0;
+let cartas = [];
+let primeira = null;
 let bloqueado = false;
+let vez = 1;
+let pontos = [0, 0];
+let pares = 0;           
 
-function embaralhar() {
-    cartas.sort(() => Math.random() - 0.5);
-}
+const tabuleiro = document.getElementById("tabuleiro");
+const vezJogador = document.getElementById("vez-jogador");
+const btnReiniciar = document.getElementById("reiniciar");
 
-function criarTabuleiro() {
+function iniciar() {
+    // duplica as imagens e embaralha
+    cartas = [...simbolos, ...simbolos].sort(() => Math.random() - 0.5);
+    primeira = null;
+    bloqueado = false;
+    vez = 1;
+    pontos = [0, 0];
+    pares = 0;
+
+    // cria as cartas na tela
     tabuleiro.innerHTML = "";
-
-    cartas.forEach((animal) => {
+    cartas.forEach(simbolo => {
         const carta = document.createElement("div");
-
-        carta.classList.add("carta");
-        carta.textContent = "?";
-        carta.dataset.animal = animal;
-
-        carta.addEventListener("click", virarCarta);
-
+        carta.className = "carta";
+        carta.dataset.simbolo = simbolo;
+        carta.textContent = "❓";
+        carta.onclick = () => clicar(carta);
         tabuleiro.appendChild(carta);
     });
+    atualizarPlacar();
 }
 
-function virarCarta() {
-    if (bloqueado || this.classList.contains("virada")) {
+function atualizarPlacar() {
+    document.getElementById("pontos1").textContent = pontos[0];
+    document.getElementById("pontos2").textContent = pontos[1];
+    vezJogador.textContent = "Vez do Jogador " + vez;
+}
+
+function virar(carta) {
+    carta.classList.add("virada");
+    carta.innerHTML = `<img src="${carta.dataset.simbolo}">`;
+}
+
+function desvirar(carta) {
+    carta.classList.remove("virada");
+    carta.textContent = "❓";
+}
+
+function clicar(carta) {
+    // ignora clique se estiver bloqueado, ou se a carta já estiver virada
+    if (bloqueado || carta.classList.contains("virada")) return;
+
+    virar(carta);
+
+    if (primeira === null) {
+        primeira = carta;   // guarda a primeira carta
         return;
     }
 
-    this.textContent = this.dataset.animal;
-    this.classList.add("virada");
-
-    if (primeiraCarta === null) {
-        primeiraCarta = this;
+    // segunda carta: compara
+    if (primeira.dataset.simbolo === carta.dataset.simbolo) {
+        // acertou: continua na vez
+        primeira.classList.add("acertada");   // <- adicione
+        carta.classList.add("acertada");
+        pontos[vez - 1]++;
+        pares++;
+        primeira = null;
+        atualizarPlacar();
+        if (pares === simbolos.length) fimDeJogo();
     } else {
-        segundaCarta = this;
-        verificarPar();
-    }
-}
-
-function verificarPar() {
-    bloqueado = true;
-
-    if (primeiraCarta.dataset.animal === segundaCarta.dataset.animal) {
-        if (jogadorAtual === 1) {
-            pontos1++;
-            document.getElementById("pontos1").textContent = pontos1;
-        } else {
-            pontos2++;
-            document.getElementById("pontos2").textContent = pontos2;
-        }
-
-        primeiraCarta = null;
-        segundaCarta = null;
-        bloqueado = false;
-
-        verificarFim();
-    } else {
+        // errou: espera 1 segundo, desvira e passa a vez
+        bloqueado = true;
+        const a = primeira;
+        primeira = null;
         setTimeout(() => {
-            primeiraCarta.textContent = "?";
-            segundaCarta.textContent = "?";
-
-            primeiraCarta.classList.remove("virada");
-            segundaCarta.classList.remove("virada");
-
-            primeiraCarta = null;
-            segundaCarta = null;
-
-            trocarJogador();
+            desvirar(a);
+            desvirar(carta);
+            vez = vez === 1 ? 2 : 1;
             bloqueado = false;
+            atualizarPlacar();
         }, 1000);
     }
 }
 
-function trocarJogador() {
-    jogadorAtual = jogadorAtual === 1 ? 2 : 1;
-
-    document.getElementById("vez-jogador").textContent =
-        "Vez do Jogador " + jogadorAtual;
+function fimDeJogo() {
+    const [a, b] = pontos;
+    if (a > b) vezJogador.textContent = `Jogador 1 venceu! (${a} × ${b})`;
+    else if (b > a) vezJogador.textContent = `Jogador 2 venceu! (${a} × ${b})`;
+    else vezJogador.textContent = `Empate! (${a} × ${b})`;
 }
 
-function verificarFim() {
-    const encontradas = document.querySelectorAll(".virada").length;
-
-    if (encontradas === 16) {
-        if (pontos1 > pontos2) {
-            alert("Jogador 1 venceu!");
-        } else if (pontos2 > pontos1) {
-            alert("Jogador 2 venceu!");
-        } else {
-            alert("O jogo terminou empatado!");
-        }
-    }
-}
-
-function reiniciarJogo() {
-    pontos1 = 0;
-    pontos2 = 0;
-    jogadorAtual = 1;
-    primeiraCarta = null;
-    segundaCarta = null;
-    bloqueado = false;
-
-    document.getElementById("pontos1").textContent = 0;
-    document.getElementById("pontos2").textContent = 0;
-    document.getElementById("vez-jogador").textContent = "Vez do Jogador 1";
-
-    embaralhar();
-    criarTabuleiro();
-}
-
-document.getElementById("reiniciar").addEventListener("click", reiniciarJogo);
-
-reiniciarJogo();
+btnReiniciar.onclick = iniciar;
+iniciar();

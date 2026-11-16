@@ -1,26 +1,28 @@
 body {
     background-color: firebrick;
+    margin: 10px 30px;
 }
 
-.placar{
+.placar {
+    display: flex;
+    justify-content: space-around;
 
-display: flex;
-justify-content: space-around;
-margin: 30px;
-padding: 20px;
-background-color: white;
-border-radius: 10px;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
 }
- h1{
-    text-align: center;
-    color: white;
- }
 
- #vez-jogador{
+h1 {
     text-align: center;
     color: white;
- }
-.tabuleiro{
+}
+
+#vez-jogador {
+    text-align: center;
+    color: white;
+}
+
+.tabuleiro {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 10px;
@@ -46,4 +48,19 @@ border-radius: 10px;
 .acertada {
     background-color: lightgreen;
     cursor: default;
+}
+
+#reiniciar {
+    background-color: white;
+    margin-top: 10px;
+    border-radius: 10px;
+    font-size: 20px;
+    width: 100%;
+    padding: 20px;
+    border: none;
+}
+
+#reiniciar:hover {
+    background-color: rgb(156, 0, 0);
+    color: white;
 }
